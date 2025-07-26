@@ -1,7 +1,92 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>QR Code Popup</title>
+  <style>
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: white;
+      border: 2px solid #333;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 1000;
+      text-align: center;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    #qrLabel {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
+
 <h1>Hello World</h1>
 <p>I'm hosted with GitHub Pages.</p>
+
+<button id="toggleBtn">Toggle QR Code</button>
+
+<div id="overlay"></div>
+<div id="popup">
+  <div id="qrcodeContainer"></div>
+  <p id="qrLabel"></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+<script>
+  const toggleBtn = document.getElementById("toggleBtn");
+  const popup = document.getElementById("popup");
+  const overlay = document.getElementById("overlay");
+  const qrcodeContainer = document.getElementById("qrcodeContainer");
+  const qrLabel = document.getElementById("qrLabel");
+
+  let isVisible = false;
+
+  function generateQRCode(value) {
+    // Clear existing QR code and update label
+    qrcodeContainer.innerHTML = "";
+    qrLabel.textContent = value;
+    
+    QRCode.toCanvas(value, function (error, canvas) {
+      if (error) {
+        console.error(error);
+        return;
+      }
+      qrcodeContainer.appendChild(canvas);
+    });
+  }
+
+  toggleBtn.addEventListener("click", () => {
+    if (!isVisible) {
+      generateQRCode("DemoStart");
+      popup.style.display = "block";
+      overlay.style.display = "block";
+    }
+    isVisible = !isVisible;
+  });
+
+  overlay.addEventListener("click", () => {
+    generateQRCode("DemoStop");
+    setTimeout(() => {
+      popup.style.display = "none";
+      overlay.style.display = "none";
+      isVisible = false;
+    }, 10000); // Delay before hiding
+  });
+</script>
+
 </body>
 </html>
